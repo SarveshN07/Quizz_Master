@@ -10,6 +10,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { LogOut, Plus, Trash2, Settings, BookOpen, AlertTriangle } from 'lucide-react';
 import { toast } from '@/hooks/use-toast';
+import { getCategories, getAllQuestions, addCategory, deleteCategory, addQuestion, deleteQuestion } from '@/utils/mockData';
 
 const AdminDashboard = () => {
   const [user, setUser] = useState(null);
@@ -25,7 +26,6 @@ const AdminDashboard = () => {
     optionD: '',
     correct: ''
   });
-  const [message, setMessage] = useState({ type: '', text: '' });
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -46,24 +46,17 @@ const AdminDashboard = () => {
   }, [navigate]);
 
   const loadCategories = () => {
-    const savedCategories = localStorage.getItem('quizCategories') || 
-      JSON.stringify([
-        { id: 1, name: 'Science' },
-        { id: 2, name: 'History' },
-        { id: 3, name: 'Movies' },
-        { id: 4, name: 'Literature' }
-      ]);
-    setCategories(JSON.parse(savedCategories));
+    setCategories(getCategories());
   };
 
   const loadQuestions = (categoryId) => {
-    const savedQuestions = localStorage.getItem(`questions_${categoryId}`) || '[]';
-    setQuestions(JSON.parse(savedQuestions));
+    const allQuestions = getAllQuestions();
+    setQuestions(allQuestions[categoryId] || []);
   };
 
   useEffect(() => {
     if (selectedCategory) {
-      loadQuestions(selectedCategory);
+      loadQuestions(parseInt(selectedCategory));
     }
   }, [selectedCategory]);
 
@@ -72,9 +65,13 @@ const AdminDashboard = () => {
     navigate('/');
   };
 
-  const addCategory = () => {
+  const handleAddCategory = () => {
     if (!newCategoryName.trim()) {
-      setMessage({ type: 'error', text: 'Category name cannot be empty' });
+      toast({
+        title: "Error",
+        description: "Category name cannot be empty",
+        variant: "destructive",
+      });
       return;
     }
 
@@ -83,62 +80,66 @@ const AdminDashboard = () => {
     );
 
     if (existingCategory) {
-      setMessage({ type: 'error', text: 'Category already exists' });
+      toast({
+        title: "Error",
+        description: "Category already exists",
+        variant: "destructive",
+      });
       return;
     }
 
-    const newId = Math.max(...categories.map(cat => cat.id), 0) + 1;
-    const newCategory = { id: newId, name: newCategoryName.trim() };
-    const updatedCategories = [...categories, newCategory];
-    
-    setCategories(updatedCategories);
-    localStorage.setItem('quizCategories', JSON.stringify(updatedCategories));
+    addCategory(newCategoryName.trim());
+    loadCategories();
     setNewCategoryName('');
-    setMessage({ type: 'success', text: 'Category added successfully' });
-
+    
     toast({
       title: "Success",
       description: "Category added successfully",
     });
   };
 
-  const deleteCategory = (categoryId) => {
+  const handleDeleteCategory = (categoryId) => {
     if (!window.confirm('Are you sure you want to delete this category? This will also delete all associated questions.')) {
       return;
     }
 
-    const updatedCategories = categories.filter(cat => cat.id !== categoryId);
-    setCategories(updatedCategories);
-    localStorage.setItem('quizCategories', JSON.stringify(updatedCategories));
-    localStorage.removeItem(`questions_${categoryId}`);
+    deleteCategory(categoryId);
+    loadCategories();
     
     if (selectedCategory === categoryId.toString()) {
       setSelectedCategory('');
       setQuestions([]);
     }
 
-    setMessage({ type: 'success', text: 'Category deleted successfully' });
     toast({
       title: "Success",
       description: "Category and all associated questions deleted successfully",
     });
   };
 
-  const addQuestion = () => {
+  const handleAddQuestion = () => {
     if (!selectedCategory) {
-      setMessage({ type: 'error', text: 'Please select a category first' });
+      toast({
+        title: "Error",
+        description: "Please select a category first",
+        variant: "destructive",
+      });
       return;
     }
 
     if (!newQuestion.question.trim() || !newQuestion.optionA.trim() || 
         !newQuestion.optionB.trim() || !newQuestion.optionC.trim() || 
         !newQuestion.optionD.trim() || !newQuestion.correct) {
-      setMessage({ type: 'error', text: 'Please fill in all fields' });
+      toast({
+        title: "Error",
+        description: "Please fill in all fields",
+        variant: "destructive",
+      });
       return;
     }
 
     const questionData = {
-      id: Date.now(),
+      categoryId: parseInt(selectedCategory),
       question: newQuestion.question.trim(),
       options: [
         newQuestion.optionA.trim(),
@@ -149,9 +150,8 @@ const AdminDashboard = () => {
       correct: newQuestion.correct
     };
 
-    const updatedQuestions = [...questions, questionData];
-    setQuestions(updatedQuestions);
-    localStorage.setItem(`questions_${selectedCategory}`, JSON.stringify(updatedQuestions));
+    addQuestion(questionData);
+    loadQuestions(parseInt(selectedCategory));
     
     setNewQuestion({
       question: '',
@@ -162,23 +162,20 @@ const AdminDashboard = () => {
       correct: ''
     });
 
-    setMessage({ type: 'success', text: 'Question added successfully' });
     toast({
       title: "Success",
       description: "Question added successfully",
     });
   };
 
-  const deleteQuestion = (questionId) => {
+  const handleDeleteQuestion = (questionId) => {
     if (!window.confirm('Are you sure you want to delete this question?')) {
       return;
     }
 
-    const updatedQuestions = questions.filter(q => q.id !== questionId);
-    setQuestions(updatedQuestions);
-    localStorage.setItem(`questions_${selectedCategory}`, JSON.stringify(updatedQuestions));
+    deleteQuestion(parseInt(selectedCategory), questionId);
+    loadQuestions(parseInt(selectedCategory));
     
-    setMessage({ type: 'success', text: 'Question deleted successfully' });
     toast({
       title: "Success",
       description: "Question deleted successfully",
@@ -188,21 +185,21 @@ const AdminDashboard = () => {
   if (!user) return null;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900">
+    <div className="min-h-screen bg-[#1A1A1D]">
       {/* Header */}
-      <header className="bg-slate-800/50 backdrop-blur-sm border-b border-slate-700">
+      <header className="bg-[#2C2C30] backdrop-blur-sm border-b border-[#3D3D40] shadow-lg">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center">
-              <Settings className="w-8 h-8 text-blue-400 mr-3" />
-              <h1 className="text-2xl font-bold text-white">Admin Panel</h1>
+              <Settings className="w-8 h-8 text-[#6A0DAD] mr-3" />
+              <h1 className="text-2xl font-bold bg-gradient-to-r from-[#6A0DAD] to-[#CC5500] bg-clip-text text-transparent">Admin Panel</h1>
             </div>
             <div className="flex items-center space-x-4">
-              <span className="text-slate-300">Welcome, {user.name}!</span>
+              <span className="text-[#E0E0E0]">Welcome, {user.name}!</span>
               <Button
                 onClick={handleLogout}
                 variant="outline"
-                className="border-slate-600 text-slate-300 hover:bg-slate-700 hover:text-white"
+                className="border-[#DC3545] bg-transparent text-[#DC3545] hover:bg-[#DC3545] hover:text-[#E0E0E0] hover:border-[#DC3545] transition-colors"
               >
                 <LogOut className="w-4 h-4 mr-2" />
                 Logout
@@ -213,32 +210,27 @@ const AdminDashboard = () => {
       </header>
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Message Display */}
-        {message.text && (
-          <div className={`mb-6 p-4 rounded-lg border ${
-            message.type === 'success' 
-              ? 'bg-green-500/20 border-green-500 text-green-400' 
-              : 'bg-red-500/20 border-red-500 text-red-400'
-          }`}>
-            {message.text}
-          </div>
-        )}
-
         <Tabs defaultValue="categories" className="w-full">
-          <TabsList className="grid w-full grid-cols-2 bg-slate-800/50">
-            <TabsTrigger value="categories" className="data-[state=active]:bg-blue-500 data-[state=active]:text-white">
+          <TabsList className="grid w-full grid-cols-2 bg-[#2C2C30] border border-[#3D3D40]">
+            <TabsTrigger 
+              value="categories" 
+              className="data-[state=active]:bg-[#6A0DAD] data-[state=active]:text-[#E0E0E0] text-[#A0A0A0] hover:text-[#E0E0E0] transition-colors"
+            >
               Manage Categories
             </TabsTrigger>
-            <TabsTrigger value="questions" className="data-[state=active]:bg-blue-500 data-[state=active]:text-white">
+            <TabsTrigger 
+              value="questions" 
+              className="data-[state=active]:bg-[#6A0DAD] data-[state=active]:text-[#E0E0E0] text-[#A0A0A0] hover:text-[#E0E0E0] transition-colors"
+            >
               Manage Questions
             </TabsTrigger>
           </TabsList>
 
           {/* Manage Categories */}
           <TabsContent value="categories" className="space-y-6">
-            <Card className="bg-slate-800/50 border-slate-700">
+            <Card className="bg-[#2C2C30] border-[#3D3D40] shadow-lg">
               <CardHeader>
-                <CardTitle className="text-white text-xl">Add New Category</CardTitle>
+                <CardTitle className="text-[#E0E0E0] text-xl">Add New Category</CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="flex gap-4">
@@ -246,11 +238,11 @@ const AdminDashboard = () => {
                     placeholder="Enter category name"
                     value={newCategoryName}
                     onChange={(e) => setNewCategoryName(e.target.value)}
-                    className="bg-slate-700/50 border-slate-600 text-white placeholder:text-slate-400"
+                    className="bg-[#1E1E21] border-[#3D3D40] text-[#E0E0E0] placeholder:text-[#A0A0A0] focus:border-[#6A0DAD] focus:ring-[#6A0DAD]"
                   />
                   <Button
-                    onClick={addCategory}
-                    className="bg-blue-500 hover:bg-blue-600 text-white whitespace-nowrap"
+                    onClick={handleAddCategory}
+                    className="bg-gradient-to-r from-[#6A0DAD] to-[#CC5500] hover:from-[#7B1BB8] hover:to-[#E6610D] text-[#E0E0E0] font-medium shadow-lg border-none whitespace-nowrap"
                   >
                     <Plus className="w-4 h-4 mr-2" />
                     Add Category
@@ -259,23 +251,23 @@ const AdminDashboard = () => {
               </CardContent>
             </Card>
 
-            <Card className="bg-slate-800/50 border-slate-700">
+            <Card className="bg-[#2C2C30] border-[#3D3D40] shadow-lg">
               <CardHeader>
-                <CardTitle className="text-white text-xl">Existing Categories</CardTitle>
+                <CardTitle className="text-[#E0E0E0] text-xl">Existing Categories</CardTitle>
               </CardHeader>
               <CardContent>
                 {categories.length === 0 ? (
-                  <p className="text-slate-400 text-center py-8">No categories found</p>
+                  <p className="text-[#A0A0A0] text-center py-8">No categories found</p>
                 ) : (
                   <div className="space-y-3">
                     {categories.map((category) => (
-                      <div key={category.id} className="flex justify-between items-center p-4 bg-slate-700/30 rounded-lg border border-slate-600">
-                        <span className="text-white font-medium">{category.name}</span>
+                      <div key={category.id} className="flex justify-between items-center p-4 bg-[#1E1E21] rounded-lg border border-[#3D3D40]">
+                        <span className="text-[#E0E0E0] font-medium">{category.name}</span>
                         <Button
-                          onClick={() => deleteCategory(category.id)}
+                          onClick={() => handleDeleteCategory(category.id)}
                           variant="outline"
                           size="sm"
-                          className="border-red-500 text-red-400 hover:bg-red-500 hover:text-white"
+                          className="border-[#DC3545] bg-transparent text-[#DC3545] hover:bg-[#DC3545] hover:text-[#E0E0E0] hover:border-[#DC3545]"
                         >
                           <Trash2 className="w-4 h-4 mr-2" />
                           Delete
@@ -290,18 +282,22 @@ const AdminDashboard = () => {
 
           {/* Manage Questions */}
           <TabsContent value="questions" className="space-y-6">
-            <Card className="bg-slate-800/50 border-slate-700">
+            <Card className="bg-[#2C2C30] border-[#3D3D40] shadow-lg">
               <CardHeader>
-                <CardTitle className="text-white text-xl">Select Category</CardTitle>
+                <CardTitle className="text-[#E0E0E0] text-xl">Select Category</CardTitle>
               </CardHeader>
               <CardContent>
                 <Select value={selectedCategory} onValueChange={setSelectedCategory}>
-                  <SelectTrigger className="bg-slate-700/50 border-slate-600 text-white">
+                  <SelectTrigger className="bg-[#1E1E21] border-[#3D3D40] text-[#E0E0E0] focus:border-[#6A0DAD] focus:ring-[#6A0DAD]">
                     <SelectValue placeholder="Select a category to manage questions" />
                   </SelectTrigger>
-                  <SelectContent className="bg-slate-800 border-slate-700">
+                  <SelectContent className="bg-[#2C2C30] border-[#3D3D40]">
                     {categories.map((category) => (
-                      <SelectItem key={category.id} value={category.id.toString()}>
+                      <SelectItem 
+                        key={category.id} 
+                        value={category.id.toString()}
+                        className="text-[#E0E0E0] hover:bg-[#3D3D40] focus:bg-[#3D3D40]"
+                      >
                         {category.name}
                       </SelectItem>
                     ))}
@@ -312,80 +308,80 @@ const AdminDashboard = () => {
 
             {selectedCategory && (
               <>
-                <Card className="bg-slate-800/50 border-slate-700">
+                <Card className="bg-[#2C2C30] border-[#3D3D40] shadow-lg">
                   <CardHeader>
-                    <CardTitle className="text-white text-xl">
+                    <CardTitle className="text-[#E0E0E0] text-xl">
                       Add New Question for {categories.find(c => c.id.toString() === selectedCategory)?.name}
                     </CardTitle>
                   </CardHeader>
                   <CardContent className="space-y-4">
                     <div>
-                      <Label className="text-slate-300">Question Text</Label>
+                      <Label className="text-[#A0A0A0]">Question Text</Label>
                       <Textarea
                         placeholder="Enter your question"
                         value={newQuestion.question}
                         onChange={(e) => setNewQuestion(prev => ({ ...prev, question: e.target.value }))}
-                        className="bg-slate-700/50 border-slate-600 text-white placeholder:text-slate-400"
+                        className="bg-[#1E1E21] border-[#3D3D40] text-[#E0E0E0] placeholder:text-[#A0A0A0] focus:border-[#6A0DAD] focus:ring-[#6A0DAD]"
                       />
                     </div>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <div>
-                        <Label className="text-slate-300">Option A</Label>
+                        <Label className="text-[#A0A0A0]">Option A</Label>
                         <Input
                           placeholder="Option A"
                           value={newQuestion.optionA}
                           onChange={(e) => setNewQuestion(prev => ({ ...prev, optionA: e.target.value }))}
-                          className="bg-slate-700/50 border-slate-600 text-white placeholder:text-slate-400"
+                          className="bg-[#1E1E21] border-[#3D3D40] text-[#E0E0E0] placeholder:text-[#A0A0A0] focus:border-[#6A0DAD] focus:ring-[#6A0DAD]"
                         />
                       </div>
                       <div>
-                        <Label className="text-slate-300">Option B</Label>
+                        <Label className="text-[#A0A0A0]">Option B</Label>
                         <Input
                           placeholder="Option B"
                           value={newQuestion.optionB}
                           onChange={(e) => setNewQuestion(prev => ({ ...prev, optionB: e.target.value }))}
-                          className="bg-slate-700/50 border-slate-600 text-white placeholder:text-slate-400"
+                          className="bg-[#1E1E21] border-[#3D3D40] text-[#E0E0E0] placeholder:text-[#A0A0A0] focus:border-[#6A0DAD] focus:ring-[#6A0DAD]"
                         />
                       </div>
                       <div>
-                        <Label className="text-slate-300">Option C</Label>
+                        <Label className="text-[#A0A0A0]">Option C</Label>
                         <Input
                           placeholder="Option C"
                           value={newQuestion.optionC}
                           onChange={(e) => setNewQuestion(prev => ({ ...prev, optionC: e.target.value }))}
-                          className="bg-slate-700/50 border-slate-600 text-white placeholder:text-slate-400"
+                          className="bg-[#1E1E21] border-[#3D3D40] text-[#E0E0E0] placeholder:text-[#A0A0A0] focus:border-[#6A0DAD] focus:ring-[#6A0DAD]"
                         />
                       </div>
                       <div>
-                        <Label className="text-slate-300">Option D</Label>
+                        <Label className="text-[#A0A0A0]">Option D</Label>
                         <Input
                           placeholder="Option D"
                           value={newQuestion.optionD}
                           onChange={(e) => setNewQuestion(prev => ({ ...prev, optionD: e.target.value }))}
-                          className="bg-slate-700/50 border-slate-600 text-white placeholder:text-slate-400"
+                          className="bg-[#1E1E21] border-[#3D3D40] text-[#E0E0E0] placeholder:text-[#A0A0A0] focus:border-[#6A0DAD] focus:ring-[#6A0DAD]"
                         />
                       </div>
                     </div>
 
                     <div>
-                      <Label className="text-slate-300">Correct Answer</Label>
+                      <Label className="text-[#A0A0A0]">Correct Answer</Label>
                       <Select value={newQuestion.correct} onValueChange={(value) => setNewQuestion(prev => ({ ...prev, correct: value }))}>
-                        <SelectTrigger className="bg-slate-700/50 border-slate-600 text-white">
+                        <SelectTrigger className="bg-[#1E1E21] border-[#3D3D40] text-[#E0E0E0] focus:border-[#6A0DAD] focus:ring-[#6A0DAD]">
                           <SelectValue placeholder="Select correct answer" />
                         </SelectTrigger>
-                        <SelectContent className="bg-slate-800 border-slate-700">
-                          <SelectItem value="A">A</SelectItem>
-                          <SelectItem value="B">B</SelectItem>
-                          <SelectItem value="C">C</SelectItem>
-                          <SelectItem value="D">D</SelectItem>
+                        <SelectContent className="bg-[#2C2C30] border-[#3D3D40]">
+                          <SelectItem value="A" className="text-[#E0E0E0] hover:bg-[#3D3D40] focus:bg-[#3D3D40]">A</SelectItem>
+                          <SelectItem value="B" className="text-[#E0E0E0] hover:bg-[#3D3D40] focus:bg-[#3D3D40]">B</SelectItem>
+                          <SelectItem value="C" className="text-[#E0E0E0] hover:bg-[#3D3D40] focus:bg-[#3D3D40]">C</SelectItem>
+                          <SelectItem value="D" className="text-[#E0E0E0] hover:bg-[#3D3D40] focus:bg-[#3D3D40]">D</SelectItem>
                         </SelectContent>
                       </Select>
                     </div>
 
                     <Button
-                      onClick={addQuestion}
-                      className="w-full bg-blue-500 hover:bg-blue-600 text-white"
+                      onClick={handleAddQuestion}
+                      className="w-full bg-gradient-to-r from-[#6A0DAD] to-[#CC5500] hover:from-[#7B1BB8] hover:to-[#E6610D] text-[#E0E0E0] font-medium shadow-lg border-none"
                     >
                       <Plus className="w-4 h-4 mr-2" />
                       Add Question
@@ -393,32 +389,32 @@ const AdminDashboard = () => {
                   </CardContent>
                 </Card>
 
-                <Card className="bg-slate-800/50 border-slate-700">
+                <Card className="bg-[#2C2C30] border-[#3D3D40] shadow-lg">
                   <CardHeader>
-                    <CardTitle className="text-white text-xl flex items-center">
-                      <BookOpen className="w-5 h-5 mr-2" />
+                    <CardTitle className="text-[#E0E0E0] text-xl flex items-center">
+                      <BookOpen className="w-5 h-5 mr-2 text-[#6A0DAD]" />
                       Existing Questions ({questions.length})
                     </CardTitle>
                   </CardHeader>
                   <CardContent>
                     {questions.length === 0 ? (
                       <div className="text-center py-8">
-                        <AlertTriangle className="w-12 h-12 text-slate-500 mx-auto mb-4" />
-                        <p className="text-slate-400">No questions found for this category. Add some!</p>
+                        <AlertTriangle className="w-12 h-12 text-[#A0A0A0] mx-auto mb-4" />
+                        <p className="text-[#A0A0A0]">No questions found for this category. Add some!</p>
                       </div>
                     ) : (
                       <div className="space-y-4">
                         {questions.map((question, index) => (
-                          <div key={question.id} className="p-4 bg-slate-700/30 rounded-lg border border-slate-600">
+                          <div key={question.id} className="p-4 bg-[#1E1E21] rounded-lg border border-[#3D3D40]">
                             <div className="flex justify-between items-start mb-3">
-                              <h3 className="text-white font-medium flex-1 pr-4">
+                              <h3 className="text-[#E0E0E0] font-medium flex-1 pr-4">
                                 {index + 1}. {question.question}
                               </h3>
                               <Button
-                                onClick={() => deleteQuestion(question.id)}
+                                onClick={() => handleDeleteQuestion(question.id)}
                                 variant="outline"
                                 size="sm"
-                                className="border-red-500 text-red-400 hover:bg-red-500 hover:text-white"
+                                className="border-[#DC3545] bg-transparent text-[#DC3545] hover:bg-[#DC3545] hover:text-[#E0E0E0] hover:border-[#DC3545]"
                               >
                                 <Trash2 className="w-4 h-4" />
                               </Button>
@@ -429,7 +425,7 @@ const AdminDashboard = () => {
                                 const isCorrect = question.correct === letter;
                                 return (
                                   <div key={optIndex} className={`p-2 rounded ${
-                                    isCorrect ? 'bg-green-500/20 text-green-400' : 'bg-slate-600/30 text-slate-300'
+                                    isCorrect ? 'bg-[#28A745]/20 text-[#28A745]' : 'bg-[#3D3D40]/30 text-[#A0A0A0]'
                                   }`}>
                                     <strong>{letter}:</strong> {option}
                                   </div>
