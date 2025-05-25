@@ -6,7 +6,7 @@
   tasks:
     - name: Pull latest code
       git:
-        repo: https://SarveshN07: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@github.com/SarveshN07/Quizzer.git
+        repo: https://github.com/SarveshN07/Quizz_Master.git
         dest: ~/vite-deploy
         version: main
         force: yes
