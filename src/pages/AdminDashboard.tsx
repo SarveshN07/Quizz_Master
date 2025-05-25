@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -10,7 +9,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { LogOut, Plus, Trash2, Settings, BookOpen, AlertTriangle } from 'lucide-react';
 import { toast } from '@/hooks/use-toast';
-import { getCategories, getAllQuestions, addCategory, deleteCategory, addQuestion, deleteQuestion } from '@/utils/mockData';
+import { getCategories, getAllQuestions, addCategory, deleteCategory, addQuestion, deleteQuestion } from '@/services/database';
 
 const AdminDashboard = () => {
   const [user, setUser] = useState(null);
@@ -45,13 +44,32 @@ const AdminDashboard = () => {
     loadCategories();
   }, [navigate]);
 
-  const loadCategories = () => {
-    setCategories(getCategories());
+  const loadCategories = async () => {
+    try {
+      const categoriesData = await getCategories();
+      setCategories(categoriesData);
+    } catch (error) {
+      console.error('Error loading categories:', error);
+      toast({
+        title: "Error",
+        description: "Failed to load categories",
+        variant: "destructive",
+      });
+    }
   };
 
-  const loadQuestions = (categoryId) => {
-    const allQuestions = getAllQuestions();
-    setQuestions(allQuestions[categoryId] || []);
+  const loadQuestions = async (categoryId) => {
+    try {
+      const allQuestions = await getAllQuestions();
+      setQuestions(allQuestions[categoryId] || []);
+    } catch (error) {
+      console.error('Error loading questions:', error);
+      toast({
+        title: "Error",
+        description: "Failed to load questions",
+        variant: "destructive",
+      });
+    }
   };
 
   useEffect(() => {
@@ -65,7 +83,7 @@ const AdminDashboard = () => {
     navigate('/');
   };
 
-  const handleAddCategory = () => {
+  const handleAddCategory = async () => {
     if (!newCategoryName.trim()) {
       toast({
         title: "Error",
@@ -88,36 +106,54 @@ const AdminDashboard = () => {
       return;
     }
 
-    addCategory(newCategoryName.trim());
-    loadCategories();
-    setNewCategoryName('');
-    
-    toast({
-      title: "Success",
-      description: "Category added successfully",
-    });
+    try {
+      await addCategory(newCategoryName.trim());
+      await loadCategories();
+      setNewCategoryName('');
+      
+      toast({
+        title: "Success",
+        description: "Category added successfully",
+      });
+    } catch (error) {
+      console.error('Error adding category:', error);
+      toast({
+        title: "Error",
+        description: "Failed to add category",
+        variant: "destructive",
+      });
+    }
   };
 
-  const handleDeleteCategory = (categoryId) => {
+  const handleDeleteCategory = async (categoryId) => {
     if (!window.confirm('Are you sure you want to delete this category? This will also delete all associated questions.')) {
       return;
     }
 
-    deleteCategory(categoryId);
-    loadCategories();
-    
-    if (selectedCategory === categoryId.toString()) {
-      setSelectedCategory('');
-      setQuestions([]);
-    }
+    try {
+      await deleteCategory(categoryId);
+      await loadCategories();
+      
+      if (selectedCategory === categoryId.toString()) {
+        setSelectedCategory('');
+        setQuestions([]);
+      }
 
-    toast({
-      title: "Success",
-      description: "Category and all associated questions deleted successfully",
-    });
+      toast({
+        title: "Success",
+        description: "Category and all associated questions deleted successfully",
+      });
+    } catch (error) {
+      console.error('Error deleting category:', error);
+      toast({
+        title: "Error",
+        description: "Failed to delete category",
+        variant: "destructive",
+      });
+    }
   };
 
-  const handleAddQuestion = () => {
+  const handleAddQuestion = async () => {
     if (!selectedCategory) {
       toast({
         title: "Error",
@@ -139,7 +175,7 @@ const AdminDashboard = () => {
     }
 
     const questionData = {
-      categoryId: parseInt(selectedCategory),
+      category_id: parseInt(selectedCategory),
       question: newQuestion.question.trim(),
       options: [
         newQuestion.optionA.trim(),
@@ -150,36 +186,54 @@ const AdminDashboard = () => {
       correct: newQuestion.correct
     };
 
-    addQuestion(questionData);
-    loadQuestions(parseInt(selectedCategory));
-    
-    setNewQuestion({
-      question: '',
-      optionA: '',
-      optionB: '',
-      optionC: '',
-      optionD: '',
-      correct: ''
-    });
+    try {
+      await addQuestion(questionData);
+      await loadQuestions(parseInt(selectedCategory));
+      
+      setNewQuestion({
+        question: '',
+        optionA: '',
+        optionB: '',
+        optionC: '',
+        optionD: '',
+        correct: ''
+      });
 
-    toast({
-      title: "Success",
-      description: "Question added successfully",
-    });
+      toast({
+        title: "Success",
+        description: "Question added successfully",
+      });
+    } catch (error) {
+      console.error('Error adding question:', error);
+      toast({
+        title: "Error",
+        description: "Failed to add question",
+        variant: "destructive",
+      });
+    }
   };
 
-  const handleDeleteQuestion = (questionId) => {
+  const handleDeleteQuestion = async (questionId) => {
     if (!window.confirm('Are you sure you want to delete this question?')) {
       return;
     }
 
-    deleteQuestion(parseInt(selectedCategory), questionId);
-    loadQuestions(parseInt(selectedCategory));
-    
-    toast({
-      title: "Success",
-      description: "Question deleted successfully",
-    });
+    try {
+      await deleteQuestion(questionId);
+      await loadQuestions(parseInt(selectedCategory));
+      
+      toast({
+        title: "Success",
+        description: "Question deleted successfully",
+      });
+    } catch (error) {
+      console.error('Error deleting question:', error);
+      toast({
+        title: "Error",
+        description: "Failed to delete question",
+        variant: "destructive",
+      });
+    }
   };
 
   if (!user) return null;

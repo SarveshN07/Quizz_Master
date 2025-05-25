@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { LogOut, Play, History, Trophy, BookOpen, Atom, Globe, Film } from 'lucide-react';
-import { getCategories } from '@/utils/mockData';
+import { getCategories, getQuizHistory } from '@/services/database';
 
 const Dashboard = () => {
   const [user, setUser] = useState(null);
@@ -34,14 +34,22 @@ const Dashboard = () => {
     }
 
     setUser(userData);
-
-    // Load categories from shared data
-    setCategories(getCategories());
-
-    // Load quiz history
-    const history = localStorage.getItem(`quizHistory_${userData.id}`) || '[]';
-    setQuizHistory(JSON.parse(history));
+    loadData(userData);
   }, [navigate]);
+
+  const loadData = async (userData) => {
+    try {
+      // Load categories from database
+      const categoriesData = await getCategories();
+      setCategories(categoriesData);
+
+      // Load quiz history from database
+      const historyData = await getQuizHistory(userData.id);
+      setQuizHistory(historyData);
+    } catch (error) {
+      console.error('Error loading data:', error);
+    }
+  };
 
   const handleLogout = () => {
     localStorage.removeItem('userSession');
@@ -155,9 +163,9 @@ const Dashboard = () => {
                     <tbody>
                       {quizHistory.map((quiz, index) => (
                         <tr key={index} className="border-t border-[#3D3D40] hover:bg-[#1E1E21] transition-colors">
-                          <td className="py-4 px-6 text-[#E0E0E0] font-medium">{quiz.categoryName}</td>
+                          <td className="py-4 px-6 text-[#E0E0E0] font-medium">{quiz.category_name}</td>
                           <td className="py-4 px-6 text-[#A0A0A0]">{quiz.date}</td>
-                          <td className="py-4 px-6 text-[#A0A0A0]">{quiz.score}/5</td>
+                          <td className="py-4 px-6 text-[#A0A0A0]">{quiz.score}/{quiz.questions.length}</td>
                           <td className="py-4 px-6">
                             <span className={`font-semibold ${
                               quiz.percentage >= 80 ? 'text-[#28A745]' :
