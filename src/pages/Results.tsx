@@ -56,21 +56,21 @@ const Results = () => {
   const scoreInfo = getScoreMessage();
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-purple-900 to-gray-900">
+    <div className="min-h-screen bg-[#1A1A1D]">
       <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Score Display */}
-        <Card className="bg-gray-800/70 border-gray-700 mb-8 shadow-lg">
+        <Card className="bg-[#2C2C30] border-[#3D3D40] mb-8 shadow-lg">
           <CardHeader className="text-center">
-            <div className="mx-auto w-20 h-20 bg-gradient-to-br from-yellow-500/20 to-orange-500/20 rounded-full flex items-center justify-center mb-4">
-              <Trophy className="w-10 h-10 text-yellow-400" />
+            <div className="mx-auto w-20 h-20 bg-gradient-to-br from-[#6A0DAD]/20 to-[#CC5500]/20 rounded-full flex items-center justify-center mb-4">
+              <Trophy className="w-10 h-10 text-[#CC5500]" />
             </div>
-            <CardTitle className="text-white text-3xl mb-2">
+            <CardTitle className="text-[#E0E0E0] text-3xl mb-2">
               Quiz Results: {categoryName}
             </CardTitle>
           </CardHeader>
           <CardContent className="text-center">
             <div className="mb-6">
-              <div className="text-6xl font-bold text-white mb-2">
+              <div className="text-6xl font-bold text-[#E0E0E0] mb-2">
                 {score} / {questions?.length || 5}
               </div>
               <div className={`text-4xl font-semibold mb-4 ${scoreInfo.color}`}>
@@ -84,7 +84,7 @@ const Results = () => {
             <div className="flex flex-wrap justify-center gap-4">
               <Button
                 onClick={retakeQuiz}
-                className="bg-gradient-to-r from-emerald-600 to-cyan-600 hover:from-emerald-700 hover:to-cyan-700 text-white px-6 py-3 font-medium shadow-lg"
+                className="bg-[#6A0DAD] hover:bg-[#7B1BB8] text-[#E0E0E0] px-6 py-3 font-medium shadow-lg border-none"
               >
                 <RotateCcw className="w-5 h-5 mr-2" />
                 Retake Quiz
@@ -93,7 +93,7 @@ const Results = () => {
               <Button
                 onClick={() => setShowAnswers(!showAnswers)}
                 variant="outline"
-                className="border-gray-600 text-gray-300 hover:bg-purple-600 hover:text-white hover:border-purple-600 px-6 py-3 font-medium"
+                className="border-[#6A0DAD] bg-transparent text-[#6A0DAD] hover:bg-[#6A0DAD] hover:text-[#E0E0E0] hover:border-[#6A0DAD] px-6 py-3 font-medium"
               >
                 {showAnswers ? (
                   <>
@@ -111,7 +111,7 @@ const Results = () => {
               <Button
                 onClick={() => navigate('/dashboard')}
                 variant="outline"
-                className="border-gray-600 text-gray-300 hover:bg-pink-600 hover:text-white hover:border-pink-600 px-6 py-3 font-medium"
+                className="border-[#228B22] bg-transparent text-[#228B22] hover:bg-[#228B22] hover:text-[#E0E0E0] hover:border-[#228B22] px-6 py-3 font-medium"
               >
                 <Home className="w-5 h-5 mr-2" />
                 Back to Dashboard
@@ -122,9 +122,9 @@ const Results = () => {
 
         {/* Answer Review */}
         {showAnswers && (
-          <Card className="bg-gray-800/70 border-gray-700 shadow-lg">
+          <Card className="bg-[#2C2C30] border-[#3D3D40] shadow-lg">
             <CardHeader>
-              <CardTitle className="text-white text-2xl">Answer Review</CardTitle>
+              <CardTitle className="text-[#E0E0E0] text-2xl">Answer Review</CardTitle>
             </CardHeader>
             <CardContent className="space-y-6">
               {questions?.map((question, index) => {
@@ -135,27 +135,27 @@ const Results = () => {
                 const correctAnswerText = question.options[correctAnswer?.charCodeAt(0) - 65];
 
                 return (
-                  <div key={index} className="border border-gray-700 rounded-lg p-6 bg-gray-700/30">
+                  <div key={index} className="border border-[#3D3D40] rounded-lg p-6 bg-[#1E1E21]">
                     <div className="flex items-start mb-4">
                       <div className={`w-8 h-8 rounded-full flex items-center justify-center mr-4 flex-shrink-0 ${
-                        isCorrect ? 'bg-emerald-500' : 'bg-red-500'
+                        isCorrect ? 'bg-[#28A745]' : 'bg-[#DC3545]'
                       }`}>
                         {isCorrect ? (
-                          <Check className="w-5 h-5 text-white" />
+                          <Check className="w-5 h-5 text-[#E0E0E0]" />
                         ) : (
-                          <X className="w-5 h-5 text-white" />
+                          <X className="w-5 h-5 text-[#E0E0E0]" />
                         )}
                       </div>
                       <div className="flex-1">
-                        <h3 className="text-white font-semibold text-lg mb-3">
+                        <h3 className="text-[#E0E0E0] font-semibold text-lg mb-3">
                           Question {index + 1}: {question.question}
                         </h3>
                         
                         <div className="space-y-2">
                           <div className="flex items-center">
-                            <span className="text-gray-400 w-24">Your answer:</span>
+                            <span className="text-[#A0A0A0] w-24">Your answer:</span>
                             <span className={`font-medium ${
-                              isCorrect ? 'text-emerald-400' : 'text-red-400'
+                              isCorrect ? 'text-[#28A745]' : 'text-[#DC3545]'
                             }`}>
                               {userAnswer} - {userAnswerText}
                             </span>
@@ -163,8 +163,8 @@ const Results = () => {
                           
                           {!isCorrect && (
                             <div className="flex items-center">
-                              <span className="text-gray-400 w-24">Correct answer:</span>
-                              <span className="text-emerald-400 font-medium">
+                              <span className="text-[#A0A0A0] w-24">Correct answer:</span>
+                              <span className="text-[#28A745] font-medium">
                                 {correctAnswer} - {correctAnswerText}
                               </span>
                             </div>

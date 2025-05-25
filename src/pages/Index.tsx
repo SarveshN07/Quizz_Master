@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -86,42 +85,42 @@ const Index = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-purple-900 to-gray-900 flex items-center justify-center p-4">
+    <div className="min-h-screen bg-[#1A1A1D] flex items-center justify-center p-4">
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
-          <h1 className="text-4xl font-bold bg-gradient-to-r from-emerald-400 to-cyan-400 bg-clip-text text-transparent mb-2">
+          <h1 className="text-4xl font-bold bg-gradient-to-r from-[#6A0DAD] to-[#CC5500] bg-clip-text text-transparent mb-2">
             QuizMaster
           </h1>
-          <p className="text-gray-400">Test your knowledge, challenge yourself</p>
+          <p className="text-[#A0A0A0]">Test your knowledge, challenge yourself</p>
         </div>
 
-        <Card className="bg-gray-800/70 border-gray-700 backdrop-blur-sm shadow-2xl">
+        <Card className="bg-[#2C2C30] border-[#3D3D40] backdrop-blur-sm shadow-2xl">
           <CardHeader className="text-center">
-            <CardTitle className="text-white text-2xl">Welcome</CardTitle>
-            <CardDescription className="text-gray-400">
+            <CardTitle className="text-[#E0E0E0] text-2xl">Welcome</CardTitle>
+            <CardDescription className="text-[#A0A0A0]">
               Sign in to continue or create a new account
             </CardDescription>
           </CardHeader>
           <CardContent>
             <Tabs defaultValue="user" className="w-full">
-              <TabsList className="grid w-full grid-cols-3 bg-gray-700/50">
+              <TabsList className="grid w-full grid-cols-3 bg-[#1E1E21]">
                 <TabsTrigger 
                   value="user" 
-                  className="data-[state=active]:bg-emerald-600 data-[state=active]:text-white text-gray-300"
+                  className="data-[state=active]:bg-[#6A0DAD] data-[state=active]:text-[#E0E0E0] text-[#A0A0A0]"
                 >
                   <User className="w-4 h-4 mr-2" />
                   Login
                 </TabsTrigger>
                 <TabsTrigger 
                   value="register" 
-                  className="data-[state=active]:bg-cyan-600 data-[state=active]:text-white text-gray-300"
+                  className="data-[state=active]:bg-[#228B22] data-[state=active]:text-[#E0E0E0] text-[#A0A0A0]"
                 >
                   <UserPlus className="w-4 h-4 mr-2" />
                   Register
                 </TabsTrigger>
                 <TabsTrigger 
                   value="admin" 
-                  className="data-[state=active]:bg-purple-600 data-[state=active]:text-white text-gray-300"
+                  className="data-[state=active]:bg-[#CC5500] data-[state=active]:text-[#E0E0E0] text-[#A0A0A0]"
                 >
                   <Shield className="w-4 h-4 mr-2" />
                   Admin
@@ -130,99 +129,99 @@ const Index = () => {
 
               <TabsContent value="user" className="space-y-4 mt-6">
                 <div className="space-y-2">
-                  <Label htmlFor="user-email" className="text-gray-300">Email</Label>
+                  <Label htmlFor="user-email" className="text-[#E0E0E0]">Email</Label>
                   <Input
                     id="user-email"
                     type="email"
                     placeholder="Enter your email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    className="bg-gray-700/50 border-gray-600 text-white placeholder:text-gray-400 focus:border-emerald-500 focus:ring-emerald-500"
+                    className="bg-[#1E1E21] border-[#3D3D40] text-[#E0E0E0] placeholder:text-[#A0A0A0] focus:border-[#6A0DAD] focus:ring-[#6A0DAD]"
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="user-password" className="text-gray-300">Password</Label>
+                  <Label htmlFor="user-password" className="text-[#E0E0E0]">Password</Label>
                   <Input
                     id="user-password"
                     type="password"
                     placeholder="Enter your password"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    className="bg-gray-700/50 border-gray-600 text-white placeholder:text-gray-400 focus:border-emerald-500 focus:ring-emerald-500"
+                    className="bg-[#1E1E21] border-[#3D3D40] text-[#E0E0E0] placeholder:text-[#A0A0A0] focus:border-[#6A0DAD] focus:ring-[#6A0DAD]"
                   />
                 </div>
                 {error && (
-                  <div className="flex items-center space-x-2 text-red-400 text-sm">
+                  <div className="flex items-center space-x-2 text-[#DC3545] text-sm">
                     <AlertCircle className="w-4 h-4" />
                     <span>{error}</span>
                   </div>
                 )}
                 {success && (
-                  <div className="text-emerald-400 text-sm">
+                  <div className="text-[#28A745] text-sm">
                     {success}
                   </div>
                 )}
                 <Button
                   onClick={() => handleLogin('user')}
                   disabled={isLoading}
-                  className="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-medium transition-colors duration-200 shadow-lg"
+                  className="w-full bg-[#6A0DAD] hover:bg-[#7B1BB8] text-[#E0E0E0] font-medium transition-colors duration-200 shadow-lg border-none"
                 >
                   {isLoading ? 'Signing in...' : 'Sign In'}
                 </Button>
-                <p className="text-xs text-gray-400 text-center">
+                <p className="text-xs text-[#A0A0A0] text-center">
                   Demo: user@quiz.com / user123
                 </p>
               </TabsContent>
 
               <TabsContent value="register" className="space-y-4 mt-6">
                 <div className="space-y-2">
-                  <Label htmlFor="register-name" className="text-gray-300">Full Name</Label>
+                  <Label htmlFor="register-name" className="text-[#E0E0E0]">Full Name</Label>
                   <Input
                     id="register-name"
                     type="text"
                     placeholder="Enter your full name"
                     value={name}
                     onChange={(e) => setName(e.target.value)}
-                    className="bg-gray-700/50 border-gray-600 text-white placeholder:text-gray-400 focus:border-cyan-500 focus:ring-cyan-500"
+                    className="bg-[#1E1E21] border-[#3D3D40] text-[#E0E0E0] placeholder:text-[#A0A0A0] focus:border-[#228B22] focus:ring-[#228B22]"
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="register-email" className="text-gray-300">Email</Label>
+                  <Label htmlFor="register-email" className="text-[#E0E0E0]">Email</Label>
                   <Input
                     id="register-email"
                     type="email"
                     placeholder="Enter your email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    className="bg-gray-700/50 border-gray-600 text-white placeholder:text-gray-400 focus:border-cyan-500 focus:ring-cyan-500"
+                    className="bg-[#1E1E21] border-[#3D3D40] text-[#E0E0E0] placeholder:text-[#A0A0A0] focus:border-[#228B22] focus:ring-[#228B22]"
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="register-password" className="text-gray-300">Password</Label>
+                  <Label htmlFor="register-password" className="text-[#E0E0E0]">Password</Label>
                   <Input
                     id="register-password"
                     type="password"
                     placeholder="Enter your password"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    className="bg-gray-700/50 border-gray-600 text-white placeholder:text-gray-400 focus:border-cyan-500 focus:ring-cyan-500"
+                    className="bg-[#1E1E21] border-[#3D3D40] text-[#E0E0E0] placeholder:text-[#A0A0A0] focus:border-[#228B22] focus:ring-[#228B22]"
                   />
                 </div>
                 {error && (
-                  <div className="flex items-center space-x-2 text-red-400 text-sm">
+                  <div className="flex items-center space-x-2 text-[#DC3545] text-sm">
                     <AlertCircle className="w-4 h-4" />
                     <span>{error}</span>
                   </div>
                 )}
                 {success && (
-                  <div className="text-emerald-400 text-sm">
+                  <div className="text-[#28A745] text-sm">
                     {success}
                   </div>
                 )}
                 <Button
                   onClick={handleRegister}
                   disabled={isLoading}
-                  className="w-full bg-cyan-600 hover:bg-cyan-700 text-white font-medium transition-colors duration-200 shadow-lg"
+                  className="w-full bg-[#228B22] hover:bg-[#2EA043] text-[#E0E0E0] font-medium transition-colors duration-200 shadow-lg border-none"
                 >
                   {isLoading ? 'Creating Account...' : 'Create Account'}
                 </Button>
@@ -230,29 +229,29 @@ const Index = () => {
 
               <TabsContent value="admin" className="space-y-4 mt-6">
                 <div className="space-y-2">
-                  <Label htmlFor="admin-email" className="text-gray-300">Email</Label>
+                  <Label htmlFor="admin-email" className="text-[#E0E0E0]">Email</Label>
                   <Input
                     id="admin-email"
                     type="email"
                     placeholder="Enter admin email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    className="bg-gray-700/50 border-gray-600 text-white placeholder:text-gray-400 focus:border-purple-500 focus:ring-purple-500"
+                    className="bg-[#1E1E21] border-[#3D3D40] text-[#E0E0E0] placeholder:text-[#A0A0A0] focus:border-[#CC5500] focus:ring-[#CC5500]"
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="admin-password" className="text-gray-300">Password</Label>
+                  <Label htmlFor="admin-password" className="text-[#E0E0E0]">Password</Label>
                   <Input
                     id="admin-password"
                     type="password"
                     placeholder="Enter admin password"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    className="bg-gray-700/50 border-gray-600 text-white placeholder:text-gray-400 focus:border-purple-500 focus:ring-purple-500"
+                    className="bg-[#1E1E21] border-[#3D3D40] text-[#E0E0E0] placeholder:text-[#A0A0A0] focus:border-[#CC5500] focus:ring-[#CC5500]"
                   />
                 </div>
                 {error && (
-                  <div className="flex items-center space-x-2 text-red-400 text-sm">
+                  <div className="flex items-center space-x-2 text-[#DC3545] text-sm">
                     <AlertCircle className="w-4 h-4" />
                     <span>{error}</span>
                   </div>
@@ -260,11 +259,11 @@ const Index = () => {
                 <Button
                   onClick={() => handleLogin('admin')}
                   disabled={isLoading}
-                  className="w-full bg-purple-600 hover:bg-purple-700 text-white font-medium transition-colors duration-200 shadow-lg"
+                  className="w-full bg-[#CC5500] hover:bg-[#E6610D] text-[#E0E0E0] font-medium transition-colors duration-200 shadow-lg border-none"
                 >
                   {isLoading ? 'Signing in...' : 'Sign In as Admin'}
                 </Button>
-                <p className="text-xs text-gray-400 text-center">
+                <p className="text-xs text-[#A0A0A0] text-center">
                   Demo: admin@quiz.com / admin123
                 </p>
               </TabsContent>
@@ -272,7 +271,7 @@ const Index = () => {
           </CardContent>
         </Card>
 
-        <div className="text-center mt-8 text-gray-400">
+        <div className="text-center mt-8 text-[#A0A0A0]">
           <p>&copy; 2024 QuizMaster. All rights reserved.</p>
         </div>
       </div>

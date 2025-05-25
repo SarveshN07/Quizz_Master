@@ -125,23 +125,23 @@ const Quiz = () => {
   const currentQ = questions[currentQuestion];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-purple-900 to-gray-900">
+    <div className="min-h-screen bg-[#1A1A1D]">
       {/* Header */}
-      <header className="bg-gray-800/70 backdrop-blur-sm border-b border-gray-700 shadow-lg">
+      <header className="bg-[#2C2C30] backdrop-blur-sm border-b border-[#3D3D40] shadow-lg">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center">
               <Button
                 onClick={() => navigate('/dashboard')}
                 variant="ghost"
-                className="text-gray-300 hover:text-white hover:bg-gray-700 mr-4"
+                className="text-[#A0A0A0] hover:text-[#E0E0E0] hover:bg-[#3D3D40] mr-4"
               >
                 <ArrowLeft className="w-4 h-4 mr-2" />
                 Back to Dashboard
               </Button>
-              <h1 className="text-xl font-bold text-white">{categoryName} Quiz</h1>
+              <h1 className="text-xl font-bold text-[#E0E0E0]">{categoryName} Quiz</h1>
             </div>
-            <div className="text-gray-300">
+            <div className="text-[#A0A0A0]">
               Question {currentQuestion + 1} of {questions.length}
             </div>
           </div>
@@ -151,17 +151,17 @@ const Quiz = () => {
       <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Progress Bar */}
         <div className="mb-8">
-          <div className="flex justify-between text-sm text-gray-400 mb-2">
+          <div className="flex justify-between text-sm text-[#A0A0A0] mb-2">
             <span>Progress</span>
             <span>{Math.round(progress)}%</span>
           </div>
-          <Progress value={progress} className="h-3 bg-gray-700" />
+          <Progress value={progress} className="h-3 bg-[#3D3D40]" />
         </div>
 
         {/* Question Card */}
-        <Card className="bg-gray-800/70 border-gray-700 mb-8 shadow-lg">
+        <Card className="bg-[#2C2C30] border-[#3D3D40] mb-8 shadow-lg">
           <CardHeader>
-            <CardTitle className="text-white text-xl leading-relaxed">
+            <CardTitle className="text-[#E0E0E0] text-xl leading-relaxed">
               {currentQ.question}
             </CardTitle>
           </CardHeader>
@@ -176,15 +176,15 @@ const Quiz = () => {
                   onClick={() => handleAnswerSelect(optionLetter)}
                   className={`w-full p-4 text-left rounded-lg border-2 transition-all duration-200 ${
                     isSelected
-                      ? 'border-emerald-500 bg-emerald-500/20 text-white shadow-lg shadow-emerald-500/20'
-                      : 'border-gray-600 bg-gray-700/50 text-gray-300 hover:border-gray-500 hover:bg-gray-700/70'
+                      ? 'border-[#6A0DAD] bg-[#6A0DAD]/20 text-[#E0E0E0] shadow-lg shadow-[#6A0DAD]/20'
+                      : 'border-[#3D3D40] bg-[#1E1E21] text-[#A0A0A0] hover:border-[#A0A0A0] hover:bg-[#2C2C30]'
                   }`}
                 >
                   <div className="flex items-center">
                     <div className={`w-8 h-8 rounded-full border-2 flex items-center justify-center mr-4 font-semibold ${
                       isSelected
-                        ? 'border-emerald-400 bg-emerald-500 text-white'
-                        : 'border-gray-500 text-gray-400'
+                        ? 'border-[#6A0DAD] bg-[#6A0DAD] text-[#E0E0E0]'
+                        : 'border-[#A0A0A0] text-[#A0A0A0]'
                     }`}>
                       {isSelected ? <Check className="w-4 h-4" /> : optionLetter}
                     </div>
@@ -201,7 +201,7 @@ const Quiz = () => {
           <Button
             onClick={handleNext}
             disabled={!selectedAnswer}
-            className="bg-gradient-to-r from-emerald-600 to-cyan-600 hover:from-emerald-700 hover:to-cyan-700 text-white px-8 py-3 text-lg disabled:opacity-50 disabled:cursor-not-allowed font-medium shadow-lg"
+            className="bg-gradient-to-r from-[#6A0DAD] to-[#CC5500] hover:from-[#7B1BB8] hover:to-[#E6610D] text-[#E0E0E0] px-8 py-3 text-lg disabled:opacity-50 disabled:cursor-not-allowed font-medium shadow-lg border-none"
           >
             {currentQuestion === questions.length - 1 ? 'Finish Quiz' : 'Next Question'}
             <ArrowRight className="w-5 h-5 ml-2" />
