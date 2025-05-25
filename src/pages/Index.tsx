@@ -91,7 +91,7 @@ const Index = () => {
           <h1 className="text-4xl font-bold bg-gradient-to-r from-[#6A0DAD] to-[#CC5500] bg-clip-text text-transparent mb-2">
             QuizMaster
           </h1>
-          <p className="text-[#A0A0A0]">Test your knowledge, challenge yourself</p>
+          <p className="text-[#A0A0A0]">Test your knowledge, challenge yourself , try today </p>
         </div>
 
         <Card className="bg-[#2C2C30] border-[#3D3D40] backdrop-blur-sm shadow-2xl">
