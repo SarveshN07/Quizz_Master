@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -25,6 +26,7 @@ const AdminDashboard = () => {
     optionD: '',
     correct: ''
   });
+  const [isDeleting, setIsDeleting] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -126,14 +128,20 @@ const AdminDashboard = () => {
   };
 
   const handleDeleteCategory = async (categoryId) => {
-    if (!window.confirm('Are you sure you want to delete this category? This will also delete all associated questions.')) {
+    if (!window.confirm('Are you sure you want to delete this category? This will also delete all associated questions and quiz history records.')) {
       return;
     }
 
+    setIsDeleting(true);
     try {
+      console.log('Attempting to delete category:', categoryId);
       await deleteCategory(categoryId);
+      console.log('Category deleted successfully');
+      
+      // Reload categories to reflect the deletion
       await loadCategories();
       
+      // Clear selected category if it was the one being deleted
       if (selectedCategory === categoryId.toString()) {
         setSelectedCategory('');
         setQuestions([]);
@@ -141,15 +149,17 @@ const AdminDashboard = () => {
 
       toast({
         title: "Success",
-        description: "Category and all associated questions deleted successfully",
+        description: "Category and all associated data deleted successfully",
       });
     } catch (error) {
       console.error('Error deleting category:', error);
       toast({
         title: "Error",
-        description: "Failed to delete category",
+        description: `Failed to delete category: ${error.message}`,
         variant: "destructive",
       });
+    } finally {
+      setIsDeleting(false);
     }
   };
 
@@ -319,12 +329,13 @@ const AdminDashboard = () => {
                         <span className="text-[#E0E0E0] font-medium">{category.name}</span>
                         <Button
                           onClick={() => handleDeleteCategory(category.id)}
+                          disabled={isDeleting}
                           variant="outline"
                           size="sm"
-                          className="border-[#DC3545] bg-transparent text-[#DC3545] hover:bg-[#DC3545] hover:text-[#E0E0E0] hover:border-[#DC3545]"
+                          className="border-[#DC3545] bg-transparent text-[#DC3545] hover:bg-[#DC3545] hover:text-[#E0E0E0] hover:border-[#DC3545] disabled:opacity-50"
                         >
                           <Trash2 className="w-4 h-4 mr-2" />
-                          Delete
+                          {isDeleting ? 'Deleting...' : 'Delete'}
                         </Button>
                       </div>
                     ))}
