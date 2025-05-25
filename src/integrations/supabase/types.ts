@@ -9,7 +9,161 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
-      [_ in never]: never
+      admins: {
+        Row: {
+          created_at: string | null
+          email: string
+          id: number
+          name: string
+          password: string
+        }
+        Insert: {
+          created_at?: string | null
+          email: string
+          id?: number
+          name: string
+          password: string
+        }
+        Update: {
+          created_at?: string | null
+          email?: string
+          id?: number
+          name?: string
+          password?: string
+        }
+        Relationships: []
+      }
+      categories: {
+        Row: {
+          created_at: string | null
+          id: number
+          name: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: number
+          name: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: number
+          name?: string
+        }
+        Relationships: []
+      }
+      questions: {
+        Row: {
+          category_id: number | null
+          correct: string
+          created_at: string | null
+          id: number
+          options: Json
+          question: string
+        }
+        Insert: {
+          category_id?: number | null
+          correct: string
+          created_at?: string | null
+          id?: number
+          options: Json
+          question: string
+        }
+        Update: {
+          category_id?: number | null
+          correct?: string
+          created_at?: string | null
+          id?: number
+          options?: Json
+          question?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "questions_category_id_fkey"
+            columns: ["category_id"]
+            isOneToOne: false
+            referencedRelation: "categories"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      quiz_history: {
+        Row: {
+          answers: Json
+          category_id: number | null
+          category_name: string
+          created_at: string | null
+          date: string
+          id: number
+          percentage: number
+          questions: Json
+          score: number
+          user_id: number | null
+        }
+        Insert: {
+          answers: Json
+          category_id?: number | null
+          category_name: string
+          created_at?: string | null
+          date: string
+          id?: number
+          percentage: number
+          questions: Json
+          score: number
+          user_id?: number | null
+        }
+        Update: {
+          answers?: Json
+          category_id?: number | null
+          category_name?: string
+          created_at?: string | null
+          date?: string
+          id?: number
+          percentage?: number
+          questions?: Json
+          score?: number
+          user_id?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "quiz_history_category_id_fkey"
+            columns: ["category_id"]
+            isOneToOne: false
+            referencedRelation: "categories"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "quiz_history_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      users: {
+        Row: {
+          created_at: string | null
+          email: string
+          id: number
+          name: string
+          password: string
+        }
+        Insert: {
+          created_at?: string | null
+          email: string
+          id?: number
+          name: string
+          password: string
+        }
+        Update: {
+          created_at?: string | null
+          email?: string
+          id?: number
+          name?: string
+          password?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never

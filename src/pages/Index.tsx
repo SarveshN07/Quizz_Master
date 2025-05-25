@@ -6,7 +6,7 @@ import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { User, Shield, AlertCircle, UserPlus } from 'lucide-react';
-import { mockUsers, mockAdmins, addUser } from '@/utils/mockData';
+import { addUser, authenticateUser, authenticateAdmin } from '@/services/database';
 
 const Index = () => {
   const [email, setEmail] = useState('');
@@ -28,17 +28,17 @@ const Index = () => {
       return;
     }
 
-    setTimeout(() => {
+    try {
       let user = null;
       
       if (role === 'user') {
-        user = mockUsers.find(u => u.email === email && u.password === password);
+        user = await authenticateUser(email, password);
         if (user) {
           localStorage.setItem('userSession', JSON.stringify({ id: user.id, name: user.name, email: user.email, role: 'user' }));
           navigate('/dashboard');
         }
       } else {
-        user = mockAdmins.find(a => a.email === email && a.password === password);
+        user = await authenticateAdmin(email, password);
         if (user) {
           localStorage.setItem('userSession', JSON.stringify({ id: user.id, name: user.name, email: user.email, role: 'admin' }));
           navigate('/admin-dashboard');
@@ -48,9 +48,12 @@ const Index = () => {
       if (!user) {
         setError('Invalid credentials. Please try again.');
       }
+    } catch (err) {
+      console.error('Login error:', err);
+      setError('Login failed. Please try again.');
+    }
 
-      setIsLoading(false);
-    }, 500);
+    setIsLoading(false);
   };
 
   const handleRegister = async () => {
@@ -64,24 +67,21 @@ const Index = () => {
       return;
     }
 
-    if (mockUsers.find(u => u.email === email)) {
-      setError('Email already exists. Please use a different email.');
-      setIsLoading(false);
-      return;
-    }
-
-    setTimeout(() => {
-      try {
-        addUser({ name, email, password });
-        setSuccess('Account created successfully! You can now login.');
-        setName('');
-        setEmail('');
-        setPassword('');
-      } catch (err) {
+    try {
+      await addUser({ name, email, password });
+      setSuccess('Account created successfully! You can now login.');
+      setName('');
+      setEmail('');
+      setPassword('');
+    } catch (err: any) {
+      console.error('Registration error:', err);
+      if (err.message?.includes('duplicate key')) {
+        setError('Email already exists. Please use a different email.');
+      } else {
         setError('Failed to create account. Please try again.');
       }
-      setIsLoading(false);
-    }, 500);
+    }
+    setIsLoading(false);
   };
 
   return (

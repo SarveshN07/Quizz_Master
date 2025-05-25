@@ -5,17 +5,18 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
 import { ArrowLeft, ArrowRight, Check } from 'lucide-react';
-import { getQuestions, getCategories } from '@/utils/mockData';
+import { getQuestions, addQuizHistory } from '@/services/database';
+import type { Question } from '@/services/database';
 
 const Quiz = () => {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const [user, setUser] = useState(null);
-  const [questions, setQuestions] = useState([]);
+  const [questions, setQuestions] = useState<Question[]>([]);
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [selectedAnswer, setSelectedAnswer] = useState('');
   const [answers, setAnswers] = useState({});
-  const [categoryId, setCategoryId] = useState(null);
+  const [categoryId, setCategoryId] = useState<number | null>(null);
   const [categoryName, setCategoryName] = useState('');
 
   useEffect(() => {
@@ -33,8 +34,8 @@ const Quiz = () => {
 
     setUser(userData);
 
-    const catId = parseInt(searchParams.get('category'));
-    const catName = searchParams.get('name');
+    const catId = parseInt(searchParams.get('category') || '0');
+    const catName = searchParams.get('name') || '';
     
     if (!catId || !catName) {
       navigate('/dashboard');
@@ -44,21 +45,30 @@ const Quiz = () => {
     setCategoryId(catId);
     setCategoryName(catName);
 
-    // Get questions from shared data
-    const categoryQuestions = getQuestions(catId);
-    
-    if (categoryQuestions.length === 0) {
-      navigate('/dashboard');
-      return;
-    }
-    
-    // Randomize and select 5 questions
-    const shuffled = [...categoryQuestions].sort(() => 0.5 - Math.random());
-    const selectedQuestions = shuffled.slice(0, Math.min(5, shuffled.length));
-    setQuestions(selectedQuestions);
+    // Get questions from database
+    loadQuestions(catId);
   }, [searchParams, navigate]);
 
-  const handleAnswerSelect = (answer) => {
+  const loadQuestions = async (catId: number) => {
+    try {
+      const categoryQuestions = await getQuestions(catId);
+      
+      if (categoryQuestions.length === 0) {
+        navigate('/dashboard');
+        return;
+      }
+      
+      // Randomize and select 5 questions
+      const shuffled = [...categoryQuestions].sort(() => 0.5 - Math.random());
+      const selectedQuestions = shuffled.slice(0, Math.min(5, shuffled.length));
+      setQuestions(selectedQuestions);
+    } catch (error) {
+      console.error('Error loading questions:', error);
+      navigate('/dashboard');
+    }
+  };
+
+  const handleAnswerSelect = (answer: string) => {
     setSelectedAnswer(answer);
   };
 
@@ -78,7 +88,7 @@ const Quiz = () => {
     }
   };
 
-  const finishQuiz = () => {
+  const finishQuiz = async () => {
     const finalAnswers = { ...answers, [currentQuestion]: selectedAnswer };
     let score = 0;
 
@@ -90,33 +100,42 @@ const Quiz = () => {
 
     const percentage = Math.round((score / questions.length) * 100);
 
-    // Save to history
-    const history = localStorage.getItem(`quizHistory_${user.id}`) || '[]';
-    const quizHistory = JSON.parse(history);
-    
-    const newResult = {
-      categoryId,
-      categoryName,
-      score,
-      percentage,
-      date: new Date().toLocaleDateString(),
-      questions,
-      answers: finalAnswers
-    };
-
-    quizHistory.push(newResult);
-    localStorage.setItem(`quizHistory_${user.id}`, JSON.stringify(quizHistory));
-
-    // Navigate to results
-    navigate('/results', { 
-      state: { 
-        score, 
+    try {
+      // Save to database
+      await addQuizHistory({
+        user_id: user.id,
+        category_id: categoryId!,
+        category_name: categoryName,
+        score,
         percentage,
-        categoryName, 
-        questions, 
-        answers: finalAnswers 
-      } 
-    });
+        date: new Date().toLocaleDateString(),
+        questions,
+        answers: finalAnswers
+      });
+
+      // Navigate to results
+      navigate('/results', { 
+        state: { 
+          score, 
+          percentage,
+          categoryName, 
+          questions, 
+          answers: finalAnswers 
+        } 
+      });
+    } catch (error) {
+      console.error('Error saving quiz history:', error);
+      // Still navigate to results even if saving fails
+      navigate('/results', { 
+        state: { 
+          score, 
+          percentage,
+          categoryName, 
+          questions, 
+          answers: finalAnswers 
+        } 
+      });
+    }
   };
 
   if (!user || questions.length === 0) return null;
