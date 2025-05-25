@@ -34,7 +34,7 @@ const Results = () => {
   }, [navigate, score]);
 
   const getScoreMessage = () => {
-    if (percentage >= 80) return { message: "Excellent work! 🎉", color: "text-green-400" };
+    if (percentage >= 80) return { message: "Excellent work! 🎉", color: "text-emerald-400" };
     if (percentage >= 60) return { message: "Good effort! 👍", color: "text-yellow-400" };
     return { message: "Keep practicing! 💪", color: "text-red-400" };
   };
@@ -56,13 +56,13 @@ const Results = () => {
   const scoreInfo = getScoreMessage();
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900">
+    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-purple-900 to-gray-900">
       <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Score Display */}
-        <Card className="bg-slate-800/50 border-slate-700 mb-8">
+        <Card className="bg-gray-800/70 border-gray-700 mb-8 shadow-lg">
           <CardHeader className="text-center">
-            <div className="mx-auto w-20 h-20 bg-blue-500/20 rounded-full flex items-center justify-center mb-4">
-              <Trophy className="w-10 h-10 text-blue-400" />
+            <div className="mx-auto w-20 h-20 bg-gradient-to-br from-yellow-500/20 to-orange-500/20 rounded-full flex items-center justify-center mb-4">
+              <Trophy className="w-10 h-10 text-yellow-400" />
             </div>
             <CardTitle className="text-white text-3xl mb-2">
               Quiz Results: {categoryName}
@@ -84,7 +84,7 @@ const Results = () => {
             <div className="flex flex-wrap justify-center gap-4">
               <Button
                 onClick={retakeQuiz}
-                className="bg-blue-500 hover:bg-blue-600 text-white px-6 py-3"
+                className="bg-gradient-to-r from-emerald-600 to-cyan-600 hover:from-emerald-700 hover:to-cyan-700 text-white px-6 py-3 font-medium shadow-lg"
               >
                 <RotateCcw className="w-5 h-5 mr-2" />
                 Retake Quiz
@@ -93,7 +93,7 @@ const Results = () => {
               <Button
                 onClick={() => setShowAnswers(!showAnswers)}
                 variant="outline"
-                className="border-slate-600 text-slate-300 hover:bg-slate-700 hover:text-white px-6 py-3"
+                className="border-gray-600 text-gray-300 hover:bg-purple-600 hover:text-white hover:border-purple-600 px-6 py-3 font-medium"
               >
                 {showAnswers ? (
                   <>
@@ -111,7 +111,7 @@ const Results = () => {
               <Button
                 onClick={() => navigate('/dashboard')}
                 variant="outline"
-                className="border-slate-600 text-slate-300 hover:bg-slate-700 hover:text-white px-6 py-3"
+                className="border-gray-600 text-gray-300 hover:bg-pink-600 hover:text-white hover:border-pink-600 px-6 py-3 font-medium"
               >
                 <Home className="w-5 h-5 mr-2" />
                 Back to Dashboard
@@ -122,7 +122,7 @@ const Results = () => {
 
         {/* Answer Review */}
         {showAnswers && (
-          <Card className="bg-slate-800/50 border-slate-700">
+          <Card className="bg-gray-800/70 border-gray-700 shadow-lg">
             <CardHeader>
               <CardTitle className="text-white text-2xl">Answer Review</CardTitle>
             </CardHeader>
@@ -135,10 +135,10 @@ const Results = () => {
                 const correctAnswerText = question.options[correctAnswer?.charCodeAt(0) - 65];
 
                 return (
-                  <div key={index} className="border border-slate-700 rounded-lg p-6">
+                  <div key={index} className="border border-gray-700 rounded-lg p-6 bg-gray-700/30">
                     <div className="flex items-start mb-4">
                       <div className={`w-8 h-8 rounded-full flex items-center justify-center mr-4 flex-shrink-0 ${
-                        isCorrect ? 'bg-green-500' : 'bg-red-500'
+                        isCorrect ? 'bg-emerald-500' : 'bg-red-500'
                       }`}>
                         {isCorrect ? (
                           <Check className="w-5 h-5 text-white" />
@@ -153,9 +153,9 @@ const Results = () => {
                         
                         <div className="space-y-2">
                           <div className="flex items-center">
-                            <span className="text-slate-400 w-24">Your answer:</span>
+                            <span className="text-gray-400 w-24">Your answer:</span>
                             <span className={`font-medium ${
-                              isCorrect ? 'text-green-400' : 'text-red-400'
+                              isCorrect ? 'text-emerald-400' : 'text-red-400'
                             }`}>
                               {userAnswer} - {userAnswerText}
                             </span>
@@ -163,8 +163,8 @@ const Results = () => {
                           
                           {!isCorrect && (
                             <div className="flex items-center">
-                              <span className="text-slate-400 w-24">Correct answer:</span>
-                              <span className="text-green-400 font-medium">
+                              <span className="text-gray-400 w-24">Correct answer:</span>
+                              <span className="text-emerald-400 font-medium">
                                 {correctAnswer} - {correctAnswerText}
                               </span>
                             </div>

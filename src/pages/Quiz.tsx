@@ -5,168 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
 import { ArrowLeft, ArrowRight, Check } from 'lucide-react';
-
-// Mock quiz questions
-const mockQuestions = {
-  1: [ // Science
-    {
-      id: 1,
-      question: "What is the chemical symbol for gold?",
-      options: ["Go", "Gd", "Au", "Ag"],
-      correct: "C"
-    },
-    {
-      id: 2,
-      question: "Which planet is known as the Red Planet?",
-      options: ["Venus", "Mars", "Jupiter", "Saturn"],
-      correct: "B"
-    },
-    {
-      id: 3,
-      question: "What is the speed of light in vacuum?",
-      options: ["300,000 km/s", "150,000 km/s", "450,000 km/s", "600,000 km/s"],
-      correct: "A"
-    },
-    {
-      id: 4,
-      question: "Which gas makes up approximately 78% of Earth's atmosphere?",
-      options: ["Oxygen", "Carbon Dioxide", "Nitrogen", "Argon"],
-      correct: "C"
-    },
-    {
-      id: 5,
-      question: "What is the smallest unit of matter?",
-      options: ["Molecule", "Atom", "Electron", "Proton"],
-      correct: "B"
-    },
-    {
-      id: 6,
-      question: "Which blood type is known as the universal donor?",
-      options: ["A+", "B+", "AB+", "O-"],
-      correct: "D"
-    },
-    {
-      id: 7,
-      question: "What force keeps planets in orbit around the sun?",
-      options: ["Magnetic force", "Gravitational force", "Nuclear force", "Electric force"],
-      correct: "B"
-    }
-  ],
-  2: [ // History
-    {
-      id: 1,
-      question: "In which year did World War II end?",
-      options: ["1944", "1945", "1946", "1947"],
-      correct: "B"
-    },
-    {
-      id: 2,
-      question: "Who was the first President of the United States?",
-      options: ["Thomas Jefferson", "John Adams", "George Washington", "Benjamin Franklin"],
-      correct: "C"
-    },
-    {
-      id: 3,
-      question: "Which ancient wonder of the world was located in Alexandria?",
-      options: ["Hanging Gardens", "Lighthouse", "Colossus", "Mausoleum"],
-      correct: "B"
-    },
-    {
-      id: 4,
-      question: "The Berlin Wall fell in which year?",
-      options: ["1987", "1988", "1989", "1990"],
-      correct: "C"
-    },
-    {
-      id: 5,
-      question: "Which empire was ruled by Julius Caesar?",
-      options: ["Greek Empire", "Roman Empire", "Persian Empire", "Byzantine Empire"],
-      correct: "B"
-    },
-    {
-      id: 6,
-      question: "In which year did the Titanic sink?",
-      options: ["1910", "1911", "1912", "1913"],
-      correct: "C"
-    }
-  ],
-  3: [ // Movies
-    {
-      id: 1,
-      question: "Which movie won the Academy Award for Best Picture in 2020?",
-      options: ["1917", "Joker", "Parasite", "Once Upon a Time in Hollywood"],
-      correct: "C"
-    },
-    {
-      id: 2,
-      question: "Who directed the movie 'Inception'?",
-      options: ["Steven Spielberg", "Christopher Nolan", "Martin Scorsese", "Quentin Tarantino"],
-      correct: "B"
-    },
-    {
-      id: 3,
-      question: "Which actor played Iron Man in the Marvel Cinematic Universe?",
-      options: ["Chris Evans", "Chris Hemsworth", "Robert Downey Jr.", "Mark Ruffalo"],
-      correct: "C"
-    },
-    {
-      id: 4,
-      question: "What is the highest-grossing film of all time (as of 2023)?",
-      options: ["Titanic", "Avatar", "Avengers: Endgame", "Star Wars: The Force Awakens"],
-      correct: "B"
-    },
-    {
-      id: 5,
-      question: "Which movie features the song 'My Heart Will Go On'?",
-      options: ["The Bodyguard", "Titanic", "Ghost", "Dirty Dancing"],
-      correct: "B"
-    },
-    {
-      id: 6,
-      question: "Who played the character of Jack Sparrow?",
-      options: ["Orlando Bloom", "Johnny Depp", "Geoffrey Rush", "Keira Knightley"],
-      correct: "B"
-    }
-  ],
-  4: [ // Literature
-    {
-      id: 1,
-      question: "Who wrote 'Pride and Prejudice'?",
-      options: ["Charlotte Brontë", "Emily Brontë", "Jane Austen", "George Eliot"],
-      correct: "C"
-    },
-    {
-      id: 2,
-      question: "Which Shakespeare play features the characters Romeo and Juliet?",
-      options: ["Hamlet", "Macbeth", "Romeo and Juliet", "Othello"],
-      correct: "C"
-    },
-    {
-      id: 3,
-      question: "Who wrote '1984'?",
-      options: ["Aldous Huxley", "George Orwell", "Ray Bradbury", "Kurt Vonnegut"],
-      correct: "B"
-    },
-    {
-      id: 4,
-      question: "Which novel begins with 'It was the best of times, it was the worst of times'?",
-      options: ["Great Expectations", "Oliver Twist", "A Tale of Two Cities", "David Copperfield"],
-      correct: "C"
-    },
-    {
-      id: 5,
-      question: "Who wrote 'To Kill a Mockingbird'?",
-      options: ["Harper Lee", "Toni Morrison", "Flannery O'Connor", "Zora Neale Hurston"],
-      correct: "A"
-    },
-    {
-      id: 6,
-      question: "Which epic poem was written by Homer?",
-      options: ["The Aeneid", "The Iliad", "Beowulf", "The Divine Comedy"],
-      correct: "B"
-    }
-  ]
-};
+import { getQuestions, getCategories } from '@/utils/mockData';
 
 const Quiz = () => {
   const [searchParams] = useSearchParams();
@@ -205,10 +44,17 @@ const Quiz = () => {
     setCategoryId(catId);
     setCategoryName(catName);
 
-    // Get questions for this category and randomize 5
-    const categoryQuestions = mockQuestions[catId] || [];
+    // Get questions from shared data
+    const categoryQuestions = getQuestions(catId);
+    
+    if (categoryQuestions.length === 0) {
+      navigate('/dashboard');
+      return;
+    }
+    
+    // Randomize and select 5 questions
     const shuffled = [...categoryQuestions].sort(() => 0.5 - Math.random());
-    const selectedQuestions = shuffled.slice(0, 5);
+    const selectedQuestions = shuffled.slice(0, Math.min(5, shuffled.length));
     setQuestions(selectedQuestions);
   }, [searchParams, navigate]);
 
@@ -279,23 +125,23 @@ const Quiz = () => {
   const currentQ = questions[currentQuestion];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900">
+    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-purple-900 to-gray-900">
       {/* Header */}
-      <header className="bg-slate-800/50 backdrop-blur-sm border-b border-slate-700">
+      <header className="bg-gray-800/70 backdrop-blur-sm border-b border-gray-700 shadow-lg">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center">
               <Button
                 onClick={() => navigate('/dashboard')}
                 variant="ghost"
-                className="text-slate-300 hover:text-white mr-4"
+                className="text-gray-300 hover:text-white hover:bg-gray-700 mr-4"
               >
                 <ArrowLeft className="w-4 h-4 mr-2" />
                 Back to Dashboard
               </Button>
               <h1 className="text-xl font-bold text-white">{categoryName} Quiz</h1>
             </div>
-            <div className="text-slate-300">
+            <div className="text-gray-300">
               Question {currentQuestion + 1} of {questions.length}
             </div>
           </div>
@@ -305,15 +151,15 @@ const Quiz = () => {
       <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Progress Bar */}
         <div className="mb-8">
-          <div className="flex justify-between text-sm text-slate-400 mb-2">
+          <div className="flex justify-between text-sm text-gray-400 mb-2">
             <span>Progress</span>
             <span>{Math.round(progress)}%</span>
           </div>
-          <Progress value={progress} className="h-2 bg-slate-700" />
+          <Progress value={progress} className="h-3 bg-gray-700" />
         </div>
 
         {/* Question Card */}
-        <Card className="bg-slate-800/50 border-slate-700 mb-8">
+        <Card className="bg-gray-800/70 border-gray-700 mb-8 shadow-lg">
           <CardHeader>
             <CardTitle className="text-white text-xl leading-relaxed">
               {currentQ.question}
@@ -330,15 +176,15 @@ const Quiz = () => {
                   onClick={() => handleAnswerSelect(optionLetter)}
                   className={`w-full p-4 text-left rounded-lg border-2 transition-all duration-200 ${
                     isSelected
-                      ? 'border-blue-500 bg-blue-500/20 text-white'
-                      : 'border-slate-600 bg-slate-700/30 text-slate-300 hover:border-slate-500 hover:bg-slate-700/50'
+                      ? 'border-emerald-500 bg-emerald-500/20 text-white shadow-lg shadow-emerald-500/20'
+                      : 'border-gray-600 bg-gray-700/50 text-gray-300 hover:border-gray-500 hover:bg-gray-700/70'
                   }`}
                 >
                   <div className="flex items-center">
                     <div className={`w-8 h-8 rounded-full border-2 flex items-center justify-center mr-4 font-semibold ${
                       isSelected
-                        ? 'border-blue-400 bg-blue-500 text-white'
-                        : 'border-slate-500 text-slate-400'
+                        ? 'border-emerald-400 bg-emerald-500 text-white'
+                        : 'border-gray-500 text-gray-400'
                     }`}>
                       {isSelected ? <Check className="w-4 h-4" /> : optionLetter}
                     </div>
@@ -355,7 +201,7 @@ const Quiz = () => {
           <Button
             onClick={handleNext}
             disabled={!selectedAnswer}
-            className="bg-blue-500 hover:bg-blue-600 text-white px-8 py-3 text-lg disabled:opacity-50 disabled:cursor-not-allowed"
+            className="bg-gradient-to-r from-emerald-600 to-cyan-600 hover:from-emerald-700 hover:to-cyan-700 text-white px-8 py-3 text-lg disabled:opacity-50 disabled:cursor-not-allowed font-medium shadow-lg"
           >
             {currentQuestion === questions.length - 1 ? 'Finish Quiz' : 'Next Question'}
             <ArrowRight className="w-5 h-5 ml-2" />
