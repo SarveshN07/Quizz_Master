@@ -8,7 +8,6 @@
 **Use Lovable**
 
 
-Changes made via Lovable will be committed automatically to th
 
 **Use your preferred IDE**
 
