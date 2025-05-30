@@ -89,7 +89,7 @@ const Index = () => {
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
           <h1 className="text-4xl font-bold bg-gradient-to-r from-[#6A0DAD] to-[#CC5500] bg-clip-text text-transparent mb-2">
-            Omkar
+            QUIZZER
           </h1>
           <p className="text-[#A0A0A0]">Test your knowledge, challenge yourself , try today </p>
         </div>
