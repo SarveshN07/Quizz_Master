@@ -70,7 +70,7 @@ const Dashboard = () => {
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center">
               <h1 className="text-2xl font-bold bg-gradient-to-r from-[#6A0DAD] to-[#CC5500] bg-clip-text text-transparent">
-                QuizMaster
+                Quizzer
               </h1>
             </div>
             <div className="flex items-center space-x-4">
