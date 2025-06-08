@@ -1,10 +1,9 @@
-
 <!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Quizzer- Test Your Knowledge</title>
+    <title>Quizzer - Test Your Knowledge</title>
     <meta name="description" content="Interactive quiz platform with multiple categories - Science, History, Movies, and Literature" />
     <meta name="author" content="QuizMaster" />
 
@@ -19,8 +18,51 @@
   </head>
 
   <body>
+    <!-- Splash Screen -->
+    <div id="splash">
+      <h1>🧠 Quizzer</h1>
+      <p>Loading... Get ready to test your knowledge!</p>
+    </div>
+
+    <!-- React Mount Point -->
     <div id="root"></div>
-    <!-- IMPORTANT: DO NOT REMOVE THIS SCRIPT TAG OR THIS VERY COMMENT! -->
+
+    <!-- Splash Screen Styling -->
+    <style>
+      #splash {
+        position: fixed;
+        top: 0;
+        left: 0;
+        height: 100vh;
+        width: 100vw;
+        background-color: #f0f8ff;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        color: #1a237e;
+        font-size: 1.5rem;
+        z-index: 9999;
+        opacity: 1;
+        transition: opacity 0.8s ease;
+      }
+
+      #splash.fade-out {
+        opacity: 0;
+      }
+
+      #splash h1 {
+        font-size: 2.5rem;
+        margin-bottom: 0.5rem;
+      }
+
+      #splash p {
+        font-size: 1rem;
+      }
+    </style>
+
+    <!-- Scripts -->
     <script src="https://cdn.gpteng.co/gptengineer.js" type="module"></script>
     <script type="module" src="/src/main.tsx"></script>
   </body>
