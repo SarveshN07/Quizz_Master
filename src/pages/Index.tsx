@@ -85,7 +85,16 @@ const Index = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#1A1A1D] flex items-center justify-center p-4">
+    <div 
+    className="min-h-screen flex items-center justify-center p-4"
+    style={{
+    backgroundImage: "url('/blue-pink-purple-abstract-wallpaper-vivid-light-glow-elements-modern-minimalist-digital-wallpaper_657790-27532.avif')",
+    backgroundSize: 'cover',
+    backgroundPosition: 'center',
+    backgroundRepeat: 'no-repeat',
+      }}
+      > 
+    
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
           <h1 className="text-4xl font-bold bg-gradient-to-r from-[#6A0DAD] to-[#CC5500] bg-clip-text text-transparent mb-2">
