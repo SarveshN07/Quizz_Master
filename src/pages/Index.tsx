@@ -107,7 +107,7 @@ const Index = () => {
           <CardHeader className="text-center">
             <CardTitle className="text-[#E0E0E0] text-2xl">Welcome</CardTitle>
             <CardDescription className="text-[#A0A0A0]">
-              Sign in to continue or create a new account
+              Sign in to continue, or create an account to get started
             </CardDescription>
           </CardHeader>
           <CardContent>
