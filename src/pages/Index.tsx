@@ -288,7 +288,7 @@ const Index = () => {
         </Card>
 
         <div className="text-center mt-8 text-[#A0A0A0]">
-          <p>&copy; 2024 QuizMaster. All rights reserved.</p>
+          <p>&copy; 2025 QuizMaster. All rights reserved.</p>
         </div>
       </div>
     </div>
