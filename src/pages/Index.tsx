@@ -68,19 +68,26 @@ const Index = () => {
     }
 
     try {
+      // Attempt to register a new user with the provided credentials
       await addUser({ name, email, password });
-      setSuccess('Account created successfully! You can now login.');
+      // If successful, show a success message
+      setSuccess('Account created successfully! You can now login.'); 
+      // Clear form fields after successful registration
       setName('');
       setEmail('');
       setPassword('');
     } catch (err: any) {
+      // Log the error for debugging
       console.error('Registration error:', err);
+      // Check if the error is due to a duplicate email (e.g., unique constraint violation)
       if (err.message?.includes('duplicate key')) {
         setError('Email already exists. Please use a different email.');
       } else {
+        // Generic error message for other issues
         setError('Failed to create account. Please try again.');
       }
     }
+    // Always stop loading indicator after the operation completes
     setIsLoading(false);
   };
 
